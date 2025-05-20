@@ -3,6 +3,7 @@ package main
 import (
 	_ "embed"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"os/exec"
 	"strings"
@@ -15,6 +16,22 @@ var gcloudMapping []byte
 var kubectlMapping []byte
 
 func main() {
+
+	noNamespace := flag.Bool("no-namespace", false, "Do not show the namespace")
+	flag.Parse()
+
+	projectShort := getGcloudProject()
+	contextShort := getKubectlContext()
+
+	if *noNamespace {
+		fmt.Printf("g:%s|k:%s\n", projectShort, contextShort)
+	} else {
+		namespace := getNamespace()
+		fmt.Printf("g:%s|k:%s|n:%s\n", projectShort, contextShort, namespace)
+	}
+}
+
+func getGcloudProject() string {
 	project := run("gcloud config get-value core/project")
 
 	projectMap := loadMapping(gcloudMapping)
@@ -24,6 +41,10 @@ func main() {
 		projectShort = "??"
 	}
 
+	return projectShort
+}
+
+func getKubectlContext() string {
 	context := run("kubectl config current-context")
 
 	contextMap := loadMapping(kubectlMapping)
@@ -33,12 +54,16 @@ func main() {
 		contextShort = "??"
 	}
 
+	return contextShort
+}
+
+func getNamespace() string {
 	namespace := run("kubectl config view --minify --output=jsonpath={..namespace}")
 	if namespace == "" {
 		namespace = "default"
 	}
 
-	fmt.Printf("g:%s|k:%s|n:%s\n", projectShort, contextShort, namespace)
+	return namespace
 }
 
 func loadMapping(configData []byte) map[string]string {

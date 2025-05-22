@@ -18,16 +18,23 @@ var kubectlMapping []byte
 func main() {
 
 	noNamespace := flag.Bool("no-namespace", false, "Do not show the namespace")
+	noCompact := flag.Bool("no-compact", false, "Do not show the compacted version")
 	flag.Parse()
 
 	projectShort := getGcloudProject()
 	contextShort := getKubectlContext()
 
+	sep := "|"
+	space := ""
+	if !*noCompact {
+		space = " "
+	}
+
 	if *noNamespace {
-		fmt.Printf("g:%s|k:%s\n", projectShort, contextShort)
+		fmt.Printf("g:%s%s%s%sk:%s\n", projectShort, space, sep, space, contextShort)
 	} else {
 		namespace := getNamespace()
-		fmt.Printf("g:%s|k:%s|n:%s\n", projectShort, contextShort, namespace)
+		fmt.Printf("g:%s%s%s%sk:%s%s%s%sn:%s\n", projectShort, space, sep, space, contextShort, space, sep, space, namespace)
 	}
 }
 

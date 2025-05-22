@@ -1,5 +1,11 @@
 # TMUX Status Info
 
+Shows different information items for CLI usage.
+
+```shell
+g:test | k:dev | n:default
+```
+
 ## provide mappings
 
 - Update the `gcloud.json` and `kubectl.json` files with own values.

@@ -16,7 +16,11 @@ var gcloudMapping []byte
 var kubectlMapping []byte
 
 var (
-	sep = "|"
+	itemSepStr    = "|"
+	mappingSepStr = ":"
+	gcloudStr     = "g"
+	kubectlStr    = "k"
+	namespaceStr  = "n"
 )
 
 func main() {
@@ -25,20 +29,30 @@ func main() {
 	noCompact := flag.Bool("no-compact", false, "Do not show the compacted version")
 	flag.Parse()
 
-	projectShort := getGcloudProject()
-	contextShort := getKubectlContext()
+	gProject := getGcloudProjectStr()
+	kubeCtx := getKubectlContextStr()
 
-	space := ""
-	if !*noCompact {
-		space = " "
-	}
+	itemSep := getItemSeparator(*noCompact)
 
 	if *noNamespace {
-		fmt.Printf("g:%s%s%s%sk:%s\n", projectShort, space, sep, space, contextShort)
+		fmt.Printf("%s%s%s\n", gProject, itemSep, kubeCtx)
 	} else {
-		namespace := getNamespace()
-		fmt.Printf("g:%s%s%s%sk:%s%s%s%sn:%s\n", projectShort, space, sep, space, contextShort, space, sep, space, namespace)
+		namespace := getKubectlNamespaceContextStr()
+		fmt.Printf("%s%s%s%s%s\n", gProject, itemSep, kubeCtx, itemSep, namespace)
 	}
+}
+
+func getItemSeparator(isCompact bool) string {
+	space := ""
+	if !isCompact {
+		space = " "
+	}
+	return fmt.Sprintf("%s%s%s", space, itemSepStr, space)
+}
+
+func getGcloudProjectStr() string {
+	project := getGcloudProject()
+	return fmt.Sprintf("%s%s%s", gcloudStr, mappingSepStr, project)
 }
 
 func getGcloudProject() string {
@@ -54,6 +68,11 @@ func getGcloudProject() string {
 	return projectShort
 }
 
+func getKubectlContextStr() string {
+	kubectlCtx := getKubectlContext()
+	return fmt.Sprintf("%s%s%s", kubectlStr, mappingSepStr, kubectlCtx)
+}
+
 func getKubectlContext() string {
 	context := run("kubectl config current-context")
 
@@ -67,7 +86,12 @@ func getKubectlContext() string {
 	return contextShort
 }
 
-func getNamespace() string {
+func getKubectlNamespaceContextStr() string {
+	kubectlNamespace := getKubectlNamespaceContext()
+	return fmt.Sprintf("%s%s%s", namespaceStr, mappingSepStr, kubectlNamespace)
+}
+
+func getKubectlNamespaceContext() string {
 	namespace := run("kubectl config view --minify --output=jsonpath={..namespace}")
 	if namespace == "" {
 		namespace = "default"

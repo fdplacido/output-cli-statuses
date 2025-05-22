@@ -1,4 +1,20 @@
-# Compile
+# TMUX Status Info
+
+## provide mappings
+
+- Update the `gcloud.json` and `kubectl.json` files with own values.
+
+- For gcloud check from:
+```shell
+gcloud projects list
+```
+
+- For kubectl check from:
+```shell
+kubectl config get-contexts
+```
+
+## tmux conf
 
 ```shell
 # set the environment so it picks the commands

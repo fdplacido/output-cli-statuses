@@ -15,6 +15,10 @@ var gcloudMapping []byte
 //go:embed kubectl.json
 var kubectlMapping []byte
 
+var (
+	sep = "|"
+)
+
 func main() {
 
 	noNamespace := flag.Bool("no-namespace", false, "Do not show the namespace")
@@ -24,7 +28,6 @@ func main() {
 	projectShort := getGcloudProject()
 	contextShort := getKubectlContext()
 
-	sep := "|"
 	space := ""
 	if !*noCompact {
 		space = " "

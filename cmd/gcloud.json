@@ -1,0 +1,5 @@
+{
+  "cluster-dev":  "d",
+  "cluster-test": "t",
+  "cluster-prod": "p"
+}

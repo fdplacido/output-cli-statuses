@@ -11,7 +11,7 @@ set -g status-right "#(tmux-status-info)"
 set -g status-interval 5
 ```
 
-# Compile to your
+# Compile to your local machine
 
 ```shell
 go build -o $GOPATH/bin/tmux-status-info ./cmd/main.go
